@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="#" type="image/x-icon">
+    <title>VueJS</title>
+</head>
+<body>
+<div class="container pt-5" id="app">
+    <div class="row mb-3">
+        <div class="coll">
+            <h1>Card application</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="search">Find your car</label>
+                <input type="text"
+                       class="form-control"
+                       id="search"
+                       placeholder="Name, model..."
+                       v-model="search">
+            </div>
+
+            <hr>
+
+            <ul class="list-group">
+                <li v-for="(car, index) in filteredCars"
+                    class="list-group-item list-group-item-action pointer"
+                    v-on:click="selectCar(car)"
+                    :class="{'active': selectedIndexCar === index }">
+                    {{ car.name }} - {{ car.model }}
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-8 pt-5">
+            <div class="row">
+                <div class="col-md-5">
+                    <h2>{{ isActiveCar.name }}</h2>
+                    <img :src="isActiveCar.image"
+                         v-bind:alt="isActiveCar.name"
+                         class="rounded detailed-car-image">
+                </div>
+                <div class="col-md-7 pt-2">
+                    <h5>Car details</h5>
+                    <ul>
+                        <li>Model - <strong>{{ isActiveCar.model }}</strong></li>
+                        <li>Year - <strong>{{ isActiveCar.year }}</strong></li>
+                        <li>Owner - <strong>{{ isActiveCar.owner }}</strong></li>
+                    </ul>
+                    <div class="phone-block">
+                        <transition name="phone">
+                            <p v-if="phoneVisibility">{{ isActiveCar.phone }}</p>
+                        </transition>
+                    </div>
+
+                    <button class="btn btn-outline-success mr-3"
+                            @click="phoneVisibility =! phoneVisibility"
+                            v-text="phoneButtonText">
+                    </button>
+                    <button class="btn btn-primary"
+                            @click="modalVisibility = true">
+                        Buy
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3" v-if="logs.length !== 0">
+        <div class="col-md-12">
+            <ul class="list-group">
+                <li
+                        v-for="log in logs"
+                        :class="buyStatus(log)"
+                >
+                    {{ log.text }} - {{ log.date | date }}
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <transition name="modal">
+        <div class="modal fade show" tabindex="-1" v-if="modalVisibility">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modal title</h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                            @click="modalVisibility = false">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Current car - {{ isActiveCar.name }}</strong></p>
+                    <ul>
+                        <li>Model - <strong>{{ isActiveCar.model }}</strong></li>
+                        <li>Year - <strong>{{ isActiveCar.year }}</strong></li>
+                        <li>Owner - <strong>{{ isActiveCar.owner }}</strong></li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal"
+                            @click="cancelOrderCar">
+                        Cancel
+                    </button>
+                    <button type="button"
+                            class="btn btn-primary"
+                            @click="newOrderCar">
+                        Buy car
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </transition>
+    <transition name="fade">
+        <div class="modal-backdrop fade show" v-if="modalVisibility"></div>
+    </transition>
+
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
